@@ -48,58 +48,72 @@ export default function SpotifyForm({ token, createPlaylist }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        getArtistCode();
+        if (artist) {
+            getArtistCode();
+        } else {
+            finishSubmit('');
+        }
     };
 
     const finishSubmit = (artistCode) => {
         const params = {
             seed_artists: artistCode,
             seed_genres: genre,
-            target_energy: energy,
-            target_danceability: danceability,
+            target_energy: stringMakeDecimal(energy),
+            target_danceability: stringMakeDecimal(danceability),
             totalTime,
             limit: 50,
         };
         createPlaylist(params);
     };
 
+    const stringMakeDecimal = (num) => {
+        return (parseInt(num, 10) / 100).toString();
+    };
+
     return (
         <form className="event-form" onSubmit={handleSubmit}>
-            <label htmlFor="artist">
-                <span>Artist: </span>
-                <input
-                    id="artist"
-                    type="text"
-                    onChange={(e) => { setArtist(e.target.value); }}
-                    value={artist}
-                />
-            </label>
-            <div> or </div>
-            <label htmlFor="genre">
-                <span>Genre: </span>
-                <select onChange={(e) => { setGenre(e.target.value); }}>
-                    <option value=""> </option>
-                    {genreList.map((e) => {
-                        return <option value={e} key={e}>{e}</option>;
-                    })}
-                </select>
-            </label>
+            <div className="inline">
+                <label htmlFor="artist">
+                    <span>Artist: </span>
+                    <input
+                        id="artist"
+                        type="text"
+                        onChange={(e) => { setArtist(e.target.value); setGenre(''); }}
+                        value={artist}
+                    />
+                </label>
+                <span className="down"> or </span>
+                <label htmlFor="genre">
+                    <span>Genre: </span>
+                    <select value={genre} onChange={(e) => { setGenre(e.target.value); setArtist(''); }}>
+                        <option value="none"> </option>
+                        {genreList.map((e) => {
+                            return <option value={e} key={e}>{e}</option>;
+                        })}
+                    </select>
+                </label>
+            </div>
             <label htmlFor="acoustic">
-                <span>Target Energy(0 - 1): </span>
+                <span>Target Energy(0 - 100): </span>
                 <input
                     id="energy"
-                    type="text"
+                    type="number"
                     onChange={(e) => { setEnergy(e.target.value); }}
                     value={energy || ''}
+                    min="0"
+                    max="100"
                 />
             </label>
             <label htmlFor="danceability">
-                <span>Target Danceability(0 - 1): </span>
+                <span>Target Danceability(0 - 100): </span>
                 <input
                     id="danceability"
-                    type="text"
+                    type="number"
                     onChange={(e) => { setDanceability(e.target.value); }}
                     value={danceability || ''}
+                    min="0"
+                    max="100"
                 />
             </label>
             <label htmlFor="totalTime">

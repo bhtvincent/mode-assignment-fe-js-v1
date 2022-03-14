@@ -15,6 +15,7 @@ export const HomePage = () => {
     const [showModal, setShowModal] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
     const [description, setDescription] = useState('');
+    const [success, setSuccess] = useState(false);
 
     if (!user || !token) {
         // User is NOT logged in, take the user to the login page
@@ -22,6 +23,7 @@ export const HomePage = () => {
             <Redirect to="/login" />
         );
     }
+
     const addToPlaylist = (list, totalTime) => {
         let timeMS = totalTime * 60000;
         Object.keys(list).every((key) => {
@@ -113,7 +115,8 @@ export const HomePage = () => {
                 });
                 const json = await response.json();
                 console.log(json);
-                alert('success');
+                setShowModal(false);
+                setSuccess(true);
                 // check if it even has 1 here
             } catch (error) {
                 console.log('error', error);
@@ -124,7 +127,12 @@ export const HomePage = () => {
 
     return (
         <div className="home-page">
-            <UserComp user={user} />
+            <div>
+                <UserComp user={user} />
+                {success && (
+                    <span className="success">Success!</span>
+                )}
+            </div>
             <SpotifyForm token={token} createPlaylist={createPlaylist} />
             {showModal && (
                 <Modal>
@@ -132,6 +140,7 @@ export const HomePage = () => {
                         <input placeholder="New Playlist Name" onChange={(e) => { setNewPlaylistName(e.target.value); }} value={newPlaylistName} />
                         <input placeholder="Description" onChange={(e) => { setDescription(e.target.value); }} value={description} />
                         <button onClick={makePlaylist} className="button" type="button">Add Playlist</button>
+                        <button onClick={() => { setShowModal(false); setPlaylist([]); }} className="button close" type="button">Close</button>
                     </div>
                     <table>
                         <thead>

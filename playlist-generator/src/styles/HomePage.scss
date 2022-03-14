@@ -45,3 +45,17 @@
         box-sizing: border-box;
       }
 }
+
+.success {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    margin: 20px;
+    font-size: 20px;
+    background-color:rgb(4, 75, 8);
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    text-align: center;
+}
